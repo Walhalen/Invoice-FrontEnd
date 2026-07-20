@@ -1,0 +1,52 @@
+.settings-logo-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.settings-logo-avatar {
+  background: #f0f0f0;
+  color: #bfbfbf;
+}
+
+.settings-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0 24px;
+}
+
+.settings-form-full {
+  grid-column: span 2;
+}
+
+.settings-full-width {
+  width: 100%;
+}
+
+.settings-hint-text {
+  color: #8c8c8c;
+  margin: 8px 0 16px 0;
+}
+
+.settings-dragger {
+  margin-bottom: 16px;
+}
+
+.settings-current-file {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #f5f5f5;
+  border-radius: 6px;
+}
+
+.settings-preview-text {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.settings-save-button {
+  margin-top: 8px;
+}

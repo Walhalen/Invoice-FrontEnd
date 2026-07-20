@@ -1,0 +1,16 @@
+/* src/pages/Invoices.css */
+
+.invoices-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.invoices-title {
+  margin: 0;
+}
+
+.invoices-search {
+  width: 250px;
+}

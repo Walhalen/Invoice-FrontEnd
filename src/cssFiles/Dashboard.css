@@ -1,0 +1,45 @@
+.dashboard-stats-row {
+  margin-bottom: 24px;
+}
+
+.dashboard-stat-card {
+  height: 100%;
+}
+
+.dashboard-chart-card {
+  margin-bottom: 24px;
+}
+
+.chart-tooltip {
+  background: #fff;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.chart-tooltip-label {
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: #262626;
+}
+
+.chart-tooltip-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0;
+  font-size: 13px;
+}
+
+.chart-tooltip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.chart-legend-label {
+  font-size: 13px;
+  color: #595959;
+}

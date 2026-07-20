@@ -45,8 +45,7 @@ export default function MainLayout() {
         />
       </Sider>
       <Layout>
-        <Header style={{ background: '#fff', padding: '0 16px' }} />
-        <Content style={{ margin: '16px' }}>
+        <Content style={{ margin: '16px'}}>
           <Outlet />
         </Content>
       </Layout>

@@ -1,0 +1,14 @@
+.stock-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.stock-title {
+  margin: 0;
+}
+
+.stock-search {
+  width: 280px;
+}
