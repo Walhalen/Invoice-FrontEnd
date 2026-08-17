@@ -1,0 +1,31 @@
+/* src/pages/InvoiceOutgoingNew.css */
+
+.full-width {
+  width: 100%;
+}
+
+.form-row {
+  display: flex;
+}
+
+.input-sm {
+  width: 180px;
+}
+
+.input-md {
+  width: 240px;
+}
+
+.input-lg {
+  width: 280px;
+}
+
+.total-row {
+  text-align: right;
+  margin: 16px 0;
+  font-size: 16px;
+}
+
+.search-input {
+  margin-bottom: 16px;
+}
