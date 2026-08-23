@@ -71,9 +71,9 @@ export default function InvoiceIncomingNew() {
       const { file, onSuccess, onError } = options;
       setImporting(true);
       try {
-        const invoice = await importInvoiceXml(file as File);
-        message.success(`Фактура №${invoice.number} от ${invoice.supplier.name} е импортирана успешно.`);
-        onSuccess?.(invoice);
+        const success = await importInvoiceXml(file as File);
+        message.success('Фактурата е импортирана успешно.');
+        onSuccess?.(success);
         loadInvoices();
       } catch (err) {
         message.error('Неуспешен импорт на фактурата.');
