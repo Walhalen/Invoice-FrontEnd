@@ -1,0 +1,23 @@
+/* src/pages/InvoiceDetail.css */
+
+.invoice-detail-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+.invoice-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.invoice-detail-title {
+  margin: 0;
+}
+
+.invoice-detail-card {
+  margin-bottom: 16px;
+}

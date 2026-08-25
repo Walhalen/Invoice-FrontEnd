@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout';
 import Dashboard from './pages/Dashboard.tsx'
 import Invoices from './pages/Invoices';
+import InvoiceDetail from './pages/InvoiceDetail';
 import Stock from './pages/Stock';
 import AiAssistant from './pages/AiAssistant';
 import InvoiceIncomingNew from './pages/InvoiceIncomingNew.tsx'
@@ -17,6 +18,7 @@ function App() {
           <Route path="/invoices" element={<Invoices />} />
           <Route path="/invoices/incoming/new" element={<InvoiceIncomingNew />} />
           <Route path="/invoices/outgoing/new" element={<InvoiceOutgoingNew />} />
+          <Route path="/invoices/:id" element={<InvoiceDetail />} />
           <Route path="/stock" element={<Stock />} />
           <Route path="/ai-assistant" element={<AiAssistant />} />
           <Route path="/settings" element={<Settings />} />
