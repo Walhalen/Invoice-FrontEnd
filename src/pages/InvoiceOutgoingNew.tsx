@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Typography,
   Card,
@@ -16,18 +16,13 @@ import {
 } from 'antd';
 import { PlusOutlined, DeleteOutlined, SearchOutlined, FileDoneOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { getProducts } from '../services/ProductServices/getProducts';
+import type { ProductListItem } from '../types/ProductTypes';
 import '../cssFiles/InvoiceOutgoingNew.css';
 
 const { Title, Text } = Typography;
 
-interface StockPart {
-  key: string;
-  name: string;
-  available: number;
-  unitPrice: number;
-}
-
-interface SelectedPart extends StockPart {
+interface SelectedPart extends ProductListItem {
   quantity: number;
 }
 
@@ -38,86 +33,97 @@ interface ManualLineItem {
   unitPrice: number;
 }
 
-const mockStock: StockPart[] = [
-  { key: '1', name: 'Спирачни накладки', available: 12, unitPrice: 45.0 },
-  { key: '2', name: 'Маслен филтър', available: 30, unitPrice: 8.5 },
-  { key: '3', name: 'Въздушен филтър', available: 20, unitPrice: 12.0 },
-  { key: '4', name: 'Амортисьор преден', available: 6, unitPrice: 89.0 },
-];
-
 export default function InvoiceOutgoingNew() {
   const navigate = useNavigate();
   const [autoForm] = Form.useForm();
   const [manualForm] = Form.useForm();
 
+  const [products, setProducts] = useState<ProductListItem[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(false);
   const [selectedParts, setSelectedParts] = useState<SelectedPart[]>([]);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [searchText, setSearchText] = useState('');
 
-  const addPart = (part: StockPart) => {
-    if (selectedParts.find((p) => p.key === part.key)) {
+  useEffect(() => {
+    const loadProducts = async () => {
+      setLoadingProducts(true);
+      try {
+        const data = await getProducts();
+        setProducts(data);
+      } catch {
+        message.error('Неуспешно зареждане на артикулите в склада.');
+      } finally {
+        setLoadingProducts(false);
+      }
+    };
+
+    loadProducts();
+  }, []);
+
+  const addPart = (part: ProductListItem) => {
+    if (selectedParts.find((p) => p.id === part.id)) {
       message.warning('Тази част вече е добавена.');
       return;
     }
     setSelectedParts([...selectedParts, { ...part, quantity: 1 }]);
   };
 
-  const removePart = (key: string) => {
-    setSelectedParts(selectedParts.filter((p) => p.key !== key));
+  const removePart = (id: number) => {
+    setSelectedParts(selectedParts.filter((p) => p.id !== id));
   };
 
-  const updateQuantity = (key: string, quantity: number) => {
-    setSelectedParts(selectedParts.map((p) => (p.key === key ? { ...p, quantity } : p)));
+  const updateQuantity = (id: number, quantity: number) => {
+    setSelectedParts(selectedParts.map((p) => (p.id === id ? { ...p, quantity } : p)));
   };
 
-  const autoTotal = selectedParts.reduce((sum, p) => sum + p.quantity * p.unitPrice, 0);
+  const autoTotal = selectedParts.reduce((sum, p) => sum + p.quantity * p.lastPurchasePrice, 0);
 
-  const filteredStock = mockStock.filter((p) =>
+  const filteredStock = products.filter((p) =>
     p.name.toLowerCase().includes(searchText.toLowerCase())
   );
 
   const selectedColumns = [
     { title: 'Част', dataIndex: 'name' },
-    { title: 'Наличност', dataIndex: 'available' },
+    { title: 'Наличност', dataIndex: 'quantityOnHand' },
     {
       title: 'Количество',
       width: 140,
       render: (_: unknown, record: SelectedPart) => (
         <InputNumber
           min={1}
-          max={record.available}
+          max={record.quantityOnHand}
           value={record.quantity}
-          onChange={(val) => updateQuantity(record.key, val ?? 1)}
+          onChange={(val) => updateQuantity(record.id, val ?? 1)}
           className="full-width"
         />
       ),
     },
     {
       title: 'Ед. цена (лв.)',
-      dataIndex: 'unitPrice',
+      dataIndex: 'lastPurchasePrice',
       render: (val: number) => `${val.toFixed(2)} лв.`,
     },
     {
       title: 'Общо',
-      render: (_: unknown, record: SelectedPart) => `${(record.quantity * record.unitPrice).toFixed(2)} лв.`,
+      render: (_: unknown, record: SelectedPart) => `${(record.quantity * record.lastPurchasePrice).toFixed(2)} лв.`,
     },
     {
       title: '',
       width: 50,
       render: (_: unknown, record: SelectedPart) => (
-        <Button danger type="text" icon={<DeleteOutlined />} onClick={() => removePart(record.key)} />
+        <Button danger type="text" icon={<DeleteOutlined />} onClick={() => removePart(record.id)} />
       ),
     },
   ];
 
   const stockColumns = [
     { title: 'Част', dataIndex: 'name' },
-    { title: 'Наличност', dataIndex: 'available' },
-    { title: 'Цена', dataIndex: 'unitPrice', render: (v: number) => `${v.toFixed(2)} лв.` },
+    { title: 'Наличност', dataIndex: 'quantityOnHand' },
+    { title: 'Цена', dataIndex: 'lastPurchasePrice', render: (v: number) => `${v.toFixed(2)} лв.` },
     {
       title: '',
       width: 100,
-      render: (_: unknown, record: StockPart) => (
+      render: (_: unknown, record: ProductListItem) => (
         <Button type="link" onClick={() => addPart(record)}>
           Добави
         </Button>
@@ -239,7 +245,7 @@ export default function InvoiceOutgoingNew() {
         columns={selectedColumns}
         dataSource={selectedParts}
         pagination={false}
-        rowKey="key"
+        rowKey="id"
         locale={{ emptyText: 'Все още няма добавени части' }}
         footer={() => (
           <Button type="dashed" icon={<PlusOutlined />} onClick={() => setPickerOpen(true)} block>
@@ -324,7 +330,13 @@ export default function InvoiceOutgoingNew() {
           onChange={(e) => setSearchText(e.target.value)}
           className="search-input"
         />
-        <Table columns={stockColumns} dataSource={filteredStock} rowKey="key" pagination={false} />
+        <Table
+          columns={stockColumns}
+          dataSource={filteredStock}
+          rowKey="id"
+          loading={loadingProducts}
+          pagination={false}
+        />
       </Modal>
     </div>
   );
