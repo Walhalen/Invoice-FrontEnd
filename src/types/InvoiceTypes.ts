@@ -37,8 +37,8 @@ export interface InvoiceDetail {
   grossAmount: number;
   vatAmount: number;
   foreignCurrencyAmount: number;
-  outstandingAmount: number;
-  paidAmount: number;
+  outstandingAmount: number | null;
+  paidAmount: number | null;
   warehouseCode: string;
   items: InvoiceItem[];
 }

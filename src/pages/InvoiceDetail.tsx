@@ -117,8 +117,8 @@ export default function InvoiceDetail() {
           <Descriptions.Item label="Нето">{invoice.netAmount.toFixed(2)} лв.</Descriptions.Item>
           <Descriptions.Item label="ДДС">{invoice.vatAmount.toFixed(2)} лв.</Descriptions.Item>
           <Descriptions.Item label="Бруто">{invoice.grossAmount.toFixed(2)} лв.</Descriptions.Item>
-          <Descriptions.Item label="Платено">{invoice.paidAmount.toFixed(2)} лв.</Descriptions.Item>
-          <Descriptions.Item label="Остатък">{invoice.outstandingAmount.toFixed(2)} лв.</Descriptions.Item>
+          <Descriptions.Item label="Платено">{(invoice.paidAmount ?? 0).toFixed(2)} лв.</Descriptions.Item>
+          <Descriptions.Item label="Остатък">{(invoice.outstandingAmount ?? 0).toFixed(2)} лв.</Descriptions.Item>
           <Descriptions.Item label="Сума във валута">
             {invoice.foreignCurrencyAmount.toFixed(2)} {invoice.currencyCode}
           </Descriptions.Item>
