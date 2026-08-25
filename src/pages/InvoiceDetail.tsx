@@ -47,16 +47,17 @@ export default function InvoiceDetail() {
     {
       title: 'Ед. цена (лв.)',
       dataIndex: 'unitPrice',
-      render: (v: number) => v.toFixed(2),
+      render: (v: number | null) => (v ?? 0).toFixed(2),
     },
     {
       title: 'ДДС %',
       dataIndex: 'vatRate',
-      render: (v: number) => `${v}%`,
+      render: (v: number | null) => `${v ?? 0}%`,
     },
     {
       title: 'Общо (лв.)',
-      render: (_: unknown, record: InvoiceItem) => (record.quantity * record.unitPrice).toFixed(2),
+      render: (_: unknown, record: InvoiceItem) =>
+        ((record.quantity ?? 0) * (record.unitPrice ?? 0)).toFixed(2),
     },
   ];
 
@@ -114,13 +115,13 @@ export default function InvoiceDetail() {
 
       <Card className="invoice-detail-card" title="Суми">
         <Descriptions bordered column={3} size="small">
-          <Descriptions.Item label="Нето">{invoice.netAmount.toFixed(2)} лв.</Descriptions.Item>
-          <Descriptions.Item label="ДДС">{invoice.vatAmount.toFixed(2)} лв.</Descriptions.Item>
-          <Descriptions.Item label="Бруто">{invoice.grossAmount.toFixed(2)} лв.</Descriptions.Item>
+          <Descriptions.Item label="Нето">{(invoice.netAmount ?? 0).toFixed(2)} лв.</Descriptions.Item>
+          <Descriptions.Item label="ДДС">{(invoice.vatAmount ?? 0).toFixed(2)} лв.</Descriptions.Item>
+          <Descriptions.Item label="Бруто">{(invoice.grossAmount ?? 0).toFixed(2)} лв.</Descriptions.Item>
           <Descriptions.Item label="Платено">{(invoice.paidAmount ?? 0).toFixed(2)} лв.</Descriptions.Item>
           <Descriptions.Item label="Остатък">{(invoice.outstandingAmount ?? 0).toFixed(2)} лв.</Descriptions.Item>
           <Descriptions.Item label="Сума във валута">
-            {invoice.foreignCurrencyAmount.toFixed(2)} {invoice.currencyCode}
+            {(invoice.foreignCurrencyAmount ?? 0).toFixed(2)} {invoice.currencyCode}
           </Descriptions.Item>
         </Descriptions>
       </Card>

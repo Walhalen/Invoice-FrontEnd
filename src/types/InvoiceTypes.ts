@@ -33,10 +33,10 @@ export interface InvoiceDetail {
   number: string;
   issueDate: string;
   dueDate: string;
-  netAmount: number;
-  grossAmount: number;
-  vatAmount: number;
-  foreignCurrencyAmount: number;
+  netAmount: number | null;
+  grossAmount: number | null;
+  vatAmount: number | null;
+  foreignCurrencyAmount: number | null;
   outstandingAmount: number | null;
   paidAmount: number | null;
   warehouseCode: string;
