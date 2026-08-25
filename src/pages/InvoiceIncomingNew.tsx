@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   Typography,
   Card,
@@ -16,12 +16,8 @@ import {
 } from 'antd';
 import { PlusOutlined, DeleteOutlined, InboxOutlined } from '@ant-design/icons';
 import type { UploadProps } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
-import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
-import { getInvoices } from '../services/InvoiceServices/getInvoices';
 import { importInvoiceXml } from '../services/InvoiceServices/importInvoiceXml';
-import type { InvoiceListItem } from '../types/InvoiceTypes';
 import '../cssFiles/InvoicesIncomingNew.css';
 
 const { Title, Text } = Typography;
@@ -41,25 +37,7 @@ export default function InvoiceIncomingNew() {
     { key: '1', partName: '', quantity: 1, unitPrice: 0 },
   ]);
 
-  const [importedInvoices, setImportedInvoices] = useState<InvoiceListItem[]>([]);
-  const [loadingInvoices, setLoadingInvoices] = useState(false);
   const [importing, setImporting] = useState(false);
-
-  const loadInvoices = async () => {
-    setLoadingInvoices(true);
-    try {
-      const data = await getInvoices();
-      setImportedInvoices(data);
-    } catch {
-      message.error('Неуспешно зареждане на импортираните фактури.');
-    } finally {
-      setLoadingInvoices(false);
-    }
-  };
-
-  useEffect(() => {
-    loadInvoices();
-  }, []);
 
   const uploadProps: UploadProps = {
     name: 'file',
@@ -74,7 +52,7 @@ export default function InvoiceIncomingNew() {
         const success = await importInvoiceXml(file as File);
         message.success('Фактурата е импортирана успешно.');
         onSuccess?.(success);
-        loadInvoices();
+        navigate('/invoices');
       } catch (err) {
         message.error('Неуспешен импорт на фактурата.');
         onError?.(err as Error);
@@ -83,34 +61,6 @@ export default function InvoiceIncomingNew() {
       }
     },
   };
-
-  const importedColumns: ColumnsType<InvoiceListItem> = [
-    { title: 'Номер', dataIndex: 'number' },
-    { title: 'Доставчик', dataIndex: 'supplierName' },
-    {
-      title: 'Дата на издаване',
-      dataIndex: 'issueDate',
-      render: (v: string) => dayjs(v).format('DD.MM.YYYY'),
-    },
-    {
-      title: 'Срок за плащане',
-      dataIndex: 'dueDate',
-      render: (v: string) => dayjs(v).format('DD.MM.YYYY'),
-    },
-    { title: 'Нето (лв.)', dataIndex: 'netAmount', render: (v: number) => v.toFixed(2) },
-    { title: 'ДДС (лв.)', dataIndex: 'vatAmount', render: (v: number) => v.toFixed(2) },
-    { title: 'Бруто (лв.)', dataIndex: 'grossAmount', render: (v: number) => v.toFixed(2) },
-    {
-      title: 'Платено (лв.)',
-      dataIndex: 'paidAmount',
-      render: (v: number | null) => (v ?? 0).toFixed(2),
-    },
-    {
-      title: 'Остатък (лв.)',
-      dataIndex: 'outstandingAmount',
-      render: (v: number | null) => (v ?? 0).toFixed(2),
-    },
-  ];
 
   const addItem = () => {
     setItems([...items, { key: Date.now().toString(), partName: '', quantity: 1, unitPrice: 0 }]);
@@ -237,29 +187,16 @@ export default function InvoiceIncomingNew() {
   );
 
   const AutoUpload = (
-    <>
-      <Dragger {...uploadProps}>
-        <p className="ant-upload-drag-icon">
-          <InboxOutlined />
-        </p>
-        <p className="ant-upload-text">Кликни или пусни XML файл тук</p>
-        <p className="ant-upload-hint">
-          Файлът се изпраща към сървъра, който извлича данните автоматично (доставчик,
-          части, суми) и ги добавя в склада
-        </p>
-      </Dragger>
-
-      <Divider>Импортирани фактури</Divider>
-
-      <Table
-        columns={importedColumns}
-        dataSource={importedInvoices}
-        rowKey="id"
-        loading={loadingInvoices}
-        pagination={{ pageSize: 10 }}
-        locale={{ emptyText: 'Все още няма импортирани фактури' }}
-      />
-    </>
+    <Dragger {...uploadProps}>
+      <p className="ant-upload-drag-icon">
+        <InboxOutlined />
+      </p>
+      <p className="ant-upload-text">Кликни или пусни XML файл тук</p>
+      <p className="ant-upload-hint">
+        Файлът се изпраща към сървъра, който извлича данните автоматично (доставчик,
+        части, суми) и ги добавя в склада
+      </p>
+    </Dragger>
   );
 
   return (
